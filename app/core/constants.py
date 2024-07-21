@@ -16,9 +16,3 @@ APP_DIR = WORKSPACE_DIR / "app"
 ADAPTERS_DIR = APP_DIR / "adapter"
 
 CORE_DIR = APP_DIR / "core"
-
-# logging configuration
-
-LOGGING_CONFIG_PATH = ADAPTERS_DIR / "logger" / "config_log.json"
-
-LOGGER_NAME = "app_logger"  # modify this to change the logger name

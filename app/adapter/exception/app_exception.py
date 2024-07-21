@@ -1,12 +1,12 @@
 """
-Module for the AppException class
+Module for the BotException class
 
 :author: Alex Traveylan
 :date: 2024
 """
 
 
-class AppException(Exception):
+class BotException(Exception):
     """
     Exception class for the application
 
@@ -18,7 +18,7 @@ class AppException(Exception):
 
     def __init__(self, message: str):
         """
-        Constructor for AppException
+        Constructor for BotException
 
         Parameters
         ----------
