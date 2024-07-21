@@ -5,7 +5,15 @@ This module contains the configuration for the app
 :date: 2024
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
 
 # Paths of the application
 
