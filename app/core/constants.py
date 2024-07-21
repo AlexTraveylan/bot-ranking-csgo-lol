@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+RIOT_API_KEY = os.getenv("RIOT_API_KEY")
 
 
 # Paths of the application
