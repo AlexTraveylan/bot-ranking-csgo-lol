@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+coverage
+ruff
+wheel
+setuptools
+-r requirements.txt

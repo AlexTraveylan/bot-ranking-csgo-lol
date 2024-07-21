@@ -1,0 +1,24 @@
+# Python cache files
+__pycache__/
+*_cache/
+
+# Logs
+*.log
+log*.jsonl
+
+# Editor files
+# .vscode/
+
+
+# virtual environment
+env*/
+.env*
+venv*/
+.venv*/
+
+# coverage
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
