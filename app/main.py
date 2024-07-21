@@ -1,22 +1,19 @@
-"""
-Main module for the application
-"""
+from interactions import Client, Intents, listen
 
-from atexit import register
+from app.core.constants import BOT_TOKEN
 
-
-def main():
-    """Entry point for the application."""
-
-    pass
+bot = Client(intents=Intents.ALL)
 
 
-@register
-def exit_function():
-    """Auto execute when application end"""
+@listen()
+async def on_ready():
+    print("Ready")
+    print(f"This bot is owned by {bot.owner}")
 
-    pass
+
+@listen()
+async def on_message_create(event):
+    print(f"message received: {event.message.jump_url}")
 
 
-if __name__ == "__main__":
-    main()
+bot.start(BOT_TOKEN)
