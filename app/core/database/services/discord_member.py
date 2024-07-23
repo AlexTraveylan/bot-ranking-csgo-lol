@@ -17,6 +17,15 @@ class DiscordMemberController(Repository[DiscordMember]):
 
         return member
 
+    def get_by_name(session: Session, discord_real_name: str) -> DiscordMember | None:
+        member = session.exec(
+            select(DiscordMember).where(
+                DiscordMember.discord_real_name == discord_real_name
+            )
+        ).first()
+
+        return member
+
     def get_all(session: Session) -> list[DiscordMember]:
         members = session.exec(select(DiscordMember)).all()
 
