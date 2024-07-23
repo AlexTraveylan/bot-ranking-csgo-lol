@@ -1,9 +1,13 @@
 from interactions import (
     Client,
     Intents,
+    Modal,
+    ModalContext,
     OptionType,
+    ShortText,
     SlashContext,
     listen,
+    modal_callback,
     slash_command,
     slash_option,
 )
@@ -50,6 +54,21 @@ async def get_lol_rank(ctx: SlashContext, game_name: str, tag_line: str = "euw")
     await ctx.send(
         f"{account.gameName}#{account.tagLine} is currently {league_5x5.tier} {league_5x5.rank} with {league_5x5.leaguePoints} LP"
     )
+
+
+@slash_command(name="get_lol_modal", description="Ask for a League of Legends form")
+async def get_lol_modal(ctx: SlashContext):
+    my_modal = Modal(
+        ShortText(label="Nom d'invocateur", custom_id="summoner_name"),
+        title="League of Legends",
+        custom_id="lol_modal",
+    )
+    await ctx.send_modal(modal=my_modal)
+
+
+@modal_callback("lol_modal")
+async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
+    await ctx.send(summoner_name)
 
 
 bot.start(BOT_TOKEN)
