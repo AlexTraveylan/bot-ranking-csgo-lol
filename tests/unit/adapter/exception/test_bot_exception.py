@@ -5,10 +5,10 @@ Test the AppException class
 :date: 2024
 """
 
-from app.adapter.exception.app_exception import BotException
+from app.adapter.exception.bot_exception import BotException
 
 
-def test_app_exception():
+def test_bot_exception():
     """Test the BotException class."""
 
     message = "Test exception message"
