@@ -1,5 +1,9 @@
+from datetime import datetime
+
 from interactions import (
+    BrandColors,
     Client,
+    Embed,
     Intents,
     Modal,
     ModalContext,
@@ -19,6 +23,10 @@ from app.adapter.league_of_legend.api_league import (
 )
 from app.adapter.league_of_legend.schema import LeagueOutputItem, RiotAccountInput
 from app.core.constants import BOT_TOKEN
+from app.core.database.models import DiscordMember, RiotAccount, RiotScore, unit
+from app.core.database.services.discord_member import DiscordMemberController
+from app.core.database.services.riot_account import RiotAccountController
+from app.core.database.services.riot_score import RiotScoreController
 
 bot = Client(intents=Intents.ALL)
 
@@ -68,7 +76,61 @@ async def get_lol_modal(ctx: SlashContext):
 
 @modal_callback("lol_modal")
 async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
-    await ctx.send(summoner_name)
+    await ctx.defer()
+
+    member = DiscordMember(discord_real_name=str(ctx.author_id))
+
+    with unit() as session:
+        member_created = DiscordMemberController.create(session, member)
+        riot_input = RiotAccountInput(game_name=summoner_name)
+
+        lol_account_info = get_account_informations(riot_input)
+        summoner_info = get_summoner_informations(lol_account_info.puuid)
+        league_info = get_league_informations(summoner_info.id)
+
+        league_5x5: LeagueOutputItem = [
+            item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"
+        ][0]
+
+        riot_account = RiotAccount(
+            game_name=lol_account_info.gameName,
+            tag_line=lol_account_info.tagLine,
+            puuid=lol_account_info.puuid,
+            summoner_id=summoner_info.id,
+            discord_member_id=member_created.id,
+        )
+
+        riot_account_created = RiotAccountController.create(session, riot_account)
+
+        riot_score = RiotScore(
+            tier=league_5x5.tier,
+            rank=league_5x5.rank,
+            leaguePoints=league_5x5.leaguePoints,
+            wins=league_5x5.wins,
+            losses=league_5x5.losses,
+            created_at=datetime.now(),
+            riot_account_id=riot_account_created.id,
+        )
+
+        riot_score_created = RiotScoreController.create(session, riot_score)
+
+        embed = Embed(
+            title="Membre ajouté avec succès",
+            description=f"Le membre {riot_account_created} a été ajouté avec succès",
+            color=BrandColors.GREEN,
+        )
+        embed.add_field(
+            name="Compte riot (League of Legends)",
+            value=f"{riot_account_created}",
+            inline=False,
+        )
+        embed.add_field(
+            name="Score actuel",
+            value=f"{riot_score_created}",
+            inline=False,
+        )
+
+        await ctx.send(embeds=embed)
 
 
 bot.start(BOT_TOKEN)

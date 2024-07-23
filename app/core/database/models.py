@@ -14,7 +14,15 @@ class BaseSQLModel(SQLModel):
 
 class DiscordMember(BaseSQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    discord_real_name: str = Field(max_length=100)
+    discord_real_name: str = Field(max_length=100, unique=True)
+
+    def __str__(self) -> str:
+        return self.discord_real_name
+
+    def __repr__(self):
+        return (
+            f"DiscordMember(id={self.id}, discord_real_name={self.discord_real_name})"
+        )
 
 
 class RiotAccount(BaseSQLModel, table=True):
@@ -26,6 +34,12 @@ class RiotAccount(BaseSQLModel, table=True):
     discord_member_id: int = Field(
         sa_column=Column(Integer, ForeignKey("discordmember.id", ondelete="CASCADE"))
     )
+
+    def __str__(self):
+        return f"{self.game_name}#{self.tag_line}"
+
+    def __repr__(self):
+        return f"RiotAccount(game_name={self.game_name}, tag_line={self.tag_line}, puuid={self.puuid}, summoner_id={self.summoner_id}, discord_member_id={self.discord_member_id})"
 
 
 class RiotScore(BaseSQLModel, table=True):
@@ -39,6 +53,12 @@ class RiotScore(BaseSQLModel, table=True):
     riot_account_id: int = Field(
         sa_column=Column(Integer, ForeignKey("riotaccount.id", ondelete="CASCADE"))
     )
+
+    def __str__(self):
+        return f"{self.tier} {self.rank} {self.leaguePoints} LP"
+
+    def __repr__(self):
+        return f"RiotScore(tier={self.tier}, rank={self.rank}, leaguePoints={self.leaguePoints}, wins={self.wins}, losses={self.losses}, created_at={self.created_at}, riot_account_id={self.riot_account_id})"
 
 
 # Create the database
