@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from interactions import (
     BrandColors,
     Button,
@@ -11,6 +9,8 @@ from interactions import (
     ModalContext,
     ShortText,
     SlashContext,
+    Task,
+    TimeTrigger,
     component_callback,
     listen,
     modal_callback,
@@ -20,16 +20,9 @@ from interactions import (
 from app.adapter.exception.bot_exception import (
     BotException,
 )
-from app.adapter.league_of_legend.api_league import (
-    get_league_informations,
-)
-from app.adapter.league_of_legend.schema import LeagueOutputItem
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.constants import BOT_TOKEN, PRODUCTION
-from app.core.database.models import DiscordMember, RiotAccount, RiotScore, unit
-from app.core.database.services.discord_member import DiscordMemberService
-from app.core.database.services.riot_account import RiotAccountService
-from app.core.database.services.riot_score import RiotScoreService
+from app.core.database.models import unit
 
 bot = Client(intents=Intents.ALL)
 
@@ -38,61 +31,12 @@ bot = Client(intents=Intents.ALL)
 async def on_ready():
     print("Ready")
     print(f"This bot is owned by {bot.owner}")
+    begin_day.start()
 
 
-@slash_command(
-    name="get_lol_rank", description="Get the rank of a League of Legends player"
-)
-async def get_lol_rank(ctx: SlashContext):
-    await ctx.defer()
-
-    with unit() as session:
-        member: DiscordMember = DiscordMemberService.get_by_discord_id(
-            session=session,
-            discord_real_name=str(ctx.author_id),
-        )
-
-        if member is None:
-            raise ValueError("Member not found")
-
-        account: RiotAccount = RiotAccountService.get_by_discord_member_id(
-            session=session,
-            discord_member_id=member.id,
-        )
-
-        if account is None:
-            raise ValueError("Account not found")
-
-        league = get_league_informations(account.summoner_id)
-
-        league_5x5: LeagueOutputItem = [
-            item for item in league.league if item.queueType == "RANKED_SOLO_5x5"
-        ][0]
-
-        riot_score = RiotScore(
-            tier=league_5x5.tier,
-            rank=league_5x5.rank,
-            leaguePoints=league_5x5.leaguePoints,
-            wins=league_5x5.wins,
-            losses=league_5x5.losses,
-            created_at=datetime.now(),
-            riot_account_id=account.id,
-        )
-
-        riot_score_created = RiotScoreService.create(session, riot_score)
-
-        embed = Embed(
-            title="Score actuel",
-            description=f"Voici le score actuel de {account}",
-            color=BrandColors.GREEN,
-        )
-        embed.add_field(
-            name="Score actuel",
-            value=f"{riot_score_created}",
-            inline=False,
-        )
-
-        await ctx.send(embeds=embed)
+@Task.create(TimeTrigger(hour=5, minute=0, second=0, utc=True))
+async def begin_day():
+    print("It's a new day")
 
 
 @slash_command(

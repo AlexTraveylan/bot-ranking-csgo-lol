@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel
 
 # Account route schemas
@@ -28,12 +30,41 @@ class SummonerOutput(BaseModel):
 
 # League route schemas
 
+type Tier = Literal[
+    "IRON",
+    "BRONZE",
+    "SILVER",
+    "GOLD",
+    "PLATINUM",
+    "DIAMOND",
+    "MASTER",
+    "GRANDMASTER",
+    "CHALLENGER",
+]
+
+TIER_ORDER = {
+    "IRON": 0,
+    "BRONZE": 1,
+    "SILVER": 2,
+    "GOLD": 3,
+    "PLATINUM": 4,
+    "DIAMOND": 5,
+    "MASTER": 6,
+    "GRANDMASTER": 7,
+    "CHALLENGER": 8,
+}
+
+
+type Rank = Literal["I", "II", "III", "IV", "V"]
+
+RANK_ORDER = {"I": 4, "II": 3, "III": 2, "IV": 1, "V": 0}
+
 
 class LeagueOutputItem(BaseModel):
     leagueId: str
     queueType: str
-    tier: str
-    rank: str
+    tier: Tier
+    rank: Rank
     summonerId: str
     leaguePoints: int
     wins: int

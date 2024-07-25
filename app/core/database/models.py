@@ -1,11 +1,13 @@
 import contextlib
 from datetime import datetime
+from typing import Self
 
 from pydantic import ConfigDict
 from sqlalchemy import Column, ForeignKey, Integer, create_engine
 from sqlmodel import Field, Session, SQLModel
 
 from app.adapter.exception.bot_exception import BotException
+from app.adapter.league_of_legend.schema import RANK_ORDER, TIER_ORDER
 
 
 class BaseSQLModel(SQLModel):
@@ -58,6 +60,36 @@ class RiotScore(BaseSQLModel, table=True):
 
     def __repr__(self):
         return f"RiotScore(tier={self.tier}, rank={self.rank}, leaguePoints={self.leaguePoints}, wins={self.wins}, losses={self.losses}, created_at={self.created_at}, riot_account_id={self.riot_account_id})"
+
+    def __eq__(self, other: Self) -> bool:
+        return (
+            self.tier == other.tier
+            and self.rank == other.rank
+            and self.leaguePoints == other.leaguePoints
+        )
+
+    def __ne__(self, other: Self) -> bool:
+        return not self.__eq__(other)
+
+    def __lt__(self, other: Self) -> bool:
+        return (
+            TIER_ORDER[self.tier] < TIER_ORDER[other.tier]
+            or RANK_ORDER[self.rank] < RANK_ORDER[other.rank]
+            or self.leaguePoints < other.leaguePoints
+        )
+
+    def __le__(self, other: Self) -> bool:
+        return self.__lt__(other) or self.__eq__(other)
+
+    def __gt__(self, other: Self) -> bool:
+        return (
+            TIER_ORDER[self.tier] > TIER_ORDER[other.tier]
+            or RANK_ORDER[self.rank] > RANK_ORDER[other.rank]
+            or self.leaguePoints > other.leaguePoints
+        )
+
+    def __ge__(self, other: Self) -> bool:
+        return not self.__lt__(other)
 
 
 # Create the database
