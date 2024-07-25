@@ -15,6 +15,7 @@ load_dotenv()
 BOT_TOKEN: str = os.getenv("BOT_TOKEN")
 RIOT_API_KEY: str = os.getenv("RIOT_API_KEY")
 PRODUCTION: bool = os.getenv("PRODUCTION") == "True"
+SUPABASE_URL: str = os.getenv("SUPABASE_URL")
 
 
 # Paths of the application

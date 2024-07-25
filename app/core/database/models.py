@@ -8,6 +8,7 @@ from sqlmodel import Field, Session, SQLModel
 
 from app.adapter.exception.bot_exception import BotException
 from app.adapter.league_of_legend.schema import RANK_ORDER, TIER_ORDER
+from app.core.constants import SUPABASE_URL
 
 
 class BaseSQLModel(SQLModel):
@@ -94,7 +95,7 @@ class RiotScore(BaseSQLModel, table=True):
 
 # Create the database
 
-engine = create_engine("sqlite:///database.db")
+engine = create_engine(SUPABASE_URL)
 SQLModel.metadata.create_all(engine)
 
 # Create a context manager for the session
