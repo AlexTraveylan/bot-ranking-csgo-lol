@@ -23,7 +23,7 @@ from app.adapter.exception.bot_exception import (
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
-from app.core.database.models import unit
+from app.core.database.models import DiscordMember, unit
 
 bot = Client(intents=Intents.ALL)
 
@@ -35,7 +35,7 @@ async def on_ready():
     begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=5, minute=0, second=0, utc=True))
+@Task.create(TimeTrigger(hour=5, minute=0))
 async def begin_day():
     channel = bot.get_channel(842769999638429707)
 
@@ -87,14 +87,61 @@ async def begin_day():
 
 
 @slash_command(
+    name="see_riot_accounts",
+    description="Affiche la liste des comptes riot enregistrés",
+)
+async def see_riot_accounts(ctx: SlashContext):
+    """Function to see the list of riot accounts"""
+    try:
+        with unit() as session:
+            module = RiotRanking(session=session)
+            riot_accounts = module.get_riot_accounts()
+
+            embed = Embed(
+                title="Liste des comptes riot",
+                description="Voici la liste des comptes riot enregistrés",
+                color=BrandColors.BLURPLE,
+            )
+
+            for account in riot_accounts.values():
+                member = session.get_one(DiscordMember, account.discord_member_id)
+                embed.add_field(
+                    name=f"{account}",
+                    value=f"Ajouté par {member.discord_name} ({member.discord_id})",
+                    inline=False,
+                )
+
+            return await ctx.send(embeds=embed)
+
+    except BotException as e:
+        embed = Embed(
+            title="Erreur",
+            description=f"Une erreur est survenue: {e.message}",
+            color=BrandColors.RED,
+        )
+        return await ctx.send(embeds=embed)
+    except Exception as e:
+        if PRODUCTION:
+            embed = Embed(
+                title="Erreur",
+                description="Une erreur inattendue est survenue",
+                color=BrandColors.RED,
+            )
+            return await ctx.send(embeds=embed)
+        else:
+            await ctx.send(e.args[0])
+            raise e
+
+
+@slash_command(
     name="create_lol_form_button",
     description="Create a button to ask for a League of Legends form",
 )
 async def create_lol_form_button(ctx: SlashContext):
     """Function to create the button to ask for the league of legends form"""
 
-    # if ctx.author_id != bot.owner:
-    #     return await ctx.send("You are not the owner of this bot", ephemeral=True)
+    if ctx.author_id != bot.owner:
+        return await ctx.send("You are not the owner of this bot", ephemeral=True)
 
     button = Button(
         custom_id="lol_btn_form",
