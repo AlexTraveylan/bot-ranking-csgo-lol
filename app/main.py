@@ -21,6 +21,7 @@ from app.adapter.exception.bot_exception import (
     BotException,
 )
 from app.core.commands.after_lol_form import AfterLolForm
+from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
 from app.core.database.models import unit
 
@@ -36,7 +37,53 @@ async def on_ready():
 
 @Task.create(TimeTrigger(hour=5, minute=0, second=0, utc=True))
 async def begin_day():
-    print("It's a new day")
+    channel = bot.get_channel(842769999638429707)
+
+    try:
+        with unit() as session:
+            module = RiotRanking(session=session)
+            riot_accounts = module.get_riot_accounts()
+            last_scores = module.get_last_riot_score_by_account(riot_accounts.values())
+            new_scores = module.register_actual_score_for_all_accounts(
+                riot_accounts.values()
+            )
+
+            embed = Embed(
+                title="Riot ranking",
+                description="Voici le classement actuel des membres",
+                color=BrandColors.BLURPLE,
+            )
+
+            for index, (account_id, score) in enumerate(
+                sorted(new_scores.items(), key=lambda x: x[1], reverse=True)
+            ):
+                last_score = last_scores[account_id]
+                embed.add_field(
+                    name=f"#{index + 1} {riot_accounts[account_id]}",
+                    value=f"{score} (+{score.wins - last_score.wins} wins) (+{score.losses - last_score.losses} losses)",
+                    inline=False,
+                )
+
+            return await channel.send(embeds=embed)
+
+    except BotException as e:
+        embed = Embed(
+            title="Erreur",
+            description=f"Une erreur est survenue: {e.message}",
+            color=BrandColors.RED,
+        )
+        return await channel.send(embeds=embed)
+    except Exception as e:
+        if PRODUCTION:
+            embed = Embed(
+                title="Erreur",
+                description="Une erreur inattendue est survenue",
+                color=BrandColors.RED,
+            )
+            return await channel.send(embeds=embed)
+        else:
+            await channel.send(e.args[0])
+            raise e
 
 
 @slash_command(
@@ -55,7 +102,7 @@ async def create_lol_form_button(ctx: SlashContext):
         label="League of Legends",
     )
 
-    await ctx.send("Lancer le formulaire", components=button)
+    return await ctx.send("Lancer le formulaire", components=button)
 
 
 @component_callback("lol_btn_form")
@@ -67,7 +114,8 @@ async def get_lol_modal(ctx: SlashContext):
         title="League of Legends",
         custom_id="lol_modal",
     )
-    await ctx.send_modal(modal=my_modal)
+
+    return await ctx.send_modal(modal=my_modal)
 
 
 @modal_callback("lol_modal")
@@ -112,7 +160,7 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
                 inline=False,
             )
 
-            await channel.send(embeds=embed)
+            return await channel.send(embeds=embed)
 
     except BotException as e:
         embed = Embed(
@@ -130,6 +178,7 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
             )
             return await channel.send(embeds=embed)
         else:
+            await channel.send(e.args[0])
             raise e
 
 

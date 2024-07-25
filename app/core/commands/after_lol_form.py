@@ -5,11 +5,11 @@ from sqlmodel import Session
 from typing_extensions import Literal
 
 from app.adapter.exception.bot_exception import (
-    DatabaseException,
     RiotApiException,
     UniqueConstraintException,
 )
 from app.adapter.league_of_legend.api_league import (
+    get_5x5_ranking,
     get_account_informations,
     get_league_informations,
     get_summoner_informations,
@@ -34,6 +34,9 @@ class AfterLolForm:
         self.discord_author_name = discord_author_name
         self.session = session
         self.is_member_exist: Literal["get", "create"]
+
+    def __repr__(self) -> str:
+        return f"AfterLolForm(summoner_name={self.summoner_name}, discord_author_id={self.discord_author_id}, discord_author_name={self.discord_author_name}, is_member_exist={self.is_member_exist})"
 
     def get_or_create_discord_member(self) -> DiscordMember:
         is_member_exist, member = DiscordMemberService.get_or_create(
@@ -90,16 +93,7 @@ class AfterLolForm:
                 "An error occured while fetching data from Riot API"
             ) from e
 
-        league = [
-            item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"
-        ]
-
-        if league == []:
-            raise DatabaseException("No 5x5 league ranking data found")
-
-        league_5x5: LeagueOutputItem = [
-            item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"
-        ][0]
+        league_5x5: LeagueOutputItem = get_5x5_ranking(league_info)
 
         riot_score = RiotScore(
             tier=league_5x5.tier,

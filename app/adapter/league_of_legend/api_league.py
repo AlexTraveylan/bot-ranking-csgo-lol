@@ -1,5 +1,6 @@
 import requests
 
+from app.adapter.exception.bot_exception import RiotApiException
 from app.adapter.league_of_legend.schema import (
     LeagueOutput,
     LeagueOutputItem,
@@ -40,3 +41,18 @@ def get_league_informations(summoner_id: str) -> LeagueOutput:
     data = response.json()
 
     return LeagueOutput(league=[LeagueOutputItem(**item) for item in data])
+
+
+def get_5x5_ranking(league_info: LeagueOutput) -> LeagueOutputItem:
+    league = [
+        item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"
+    ]
+
+    if league == []:
+        raise RiotApiException("No 5x5 league ranking data found")
+
+    league_5x5: LeagueOutputItem = [
+        item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"
+    ][0]
+
+    return league_5x5

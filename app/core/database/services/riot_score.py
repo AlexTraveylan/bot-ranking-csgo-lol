@@ -17,6 +17,18 @@ class RiotScoreService(Repository[RiotScore]):
 
         return score
 
+    def get_last_score_by_riot_account_id(
+        session: Session, riot_account_id: IdType
+    ) -> RiotScore:
+        score = session.exec(
+            select(RiotScore)
+            .filter(RiotScore.riot_account_id == riot_account_id)
+            .order_by(RiotScore.created_at.desc())
+            .limit(1)
+        ).first()
+
+        return score
+
     def get_all(session: Session) -> list[RiotScore]:
         scores = session.exec(select(RiotScore)).all()
 
