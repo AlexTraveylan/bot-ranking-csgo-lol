@@ -37,7 +37,7 @@ async def on_ready():
 
 @Task.create(TimeTrigger(hour=5, minute=0))
 async def begin_day():
-    channel = bot.get_channel(842769999638429707)
+    channel = bot.get_channel(1264655923071291414)
 
     try:
         with unit() as session:
