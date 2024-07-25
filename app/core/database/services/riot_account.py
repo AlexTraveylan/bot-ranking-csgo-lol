@@ -4,7 +4,7 @@ from app.core.database.models import RiotAccount
 from app.core.database.repository import IdType, Repository
 
 
-class RiotAccountController(Repository[RiotAccount]):
+class RiotAccountService(Repository[RiotAccount]):
     def create(session: Session, item: RiotAccount) -> RiotAccount:
         session.add(item)
         session.commit()
@@ -19,14 +19,14 @@ class RiotAccountController(Repository[RiotAccount]):
 
     def get_by_discord_member_id(
         session: Session, discord_member_id: IdType
-    ) -> RiotAccount | None:
-        account = session.exec(
+    ) -> list[RiotAccount]:
+        accounts = session.exec(
             select(RiotAccount).where(
                 RiotAccount.discord_member_id == discord_member_id
             )
-        ).first()
+        )
 
-        return account
+        return accounts
 
     def get_all(session: Session) -> list[RiotAccount]:
         accounts = session.exec(select(RiotAccount)).all()

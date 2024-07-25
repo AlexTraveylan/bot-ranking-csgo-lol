@@ -34,3 +34,11 @@ class BotException(Exception):
 
 class DatabaseException(BotException):
     pass
+
+
+class UniqueConstraintException(DatabaseException):
+    pass
+
+
+class RiotApiException(BotException):
+    pass

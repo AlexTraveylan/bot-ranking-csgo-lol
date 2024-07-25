@@ -4,7 +4,7 @@ from app.core.database.models import RiotScore
 from app.core.database.repository import IdType, Repository
 
 
-class RiotScoreController(Repository[RiotScore]):
+class RiotScoreService(Repository[RiotScore]):
     def create(session: Session, item: RiotScore) -> RiotScore:
         session.add(item)
         session.commit()

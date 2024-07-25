@@ -5,7 +5,7 @@ from pydantic import ConfigDict
 from sqlalchemy import Column, ForeignKey, Integer, create_engine
 from sqlmodel import Field, Session, SQLModel
 
-from app.adapter.exception.bot_exception import DatabaseException
+from app.adapter.exception.bot_exception import BotException
 
 
 class BaseSQLModel(SQLModel):
@@ -14,15 +14,14 @@ class BaseSQLModel(SQLModel):
 
 class DiscordMember(BaseSQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    discord_real_name: str = Field(max_length=100, unique=True)
+    discord_id: str = Field(max_length=100, unique=True)
+    discord_name: str = Field(max_length=100)
 
     def __str__(self) -> str:
-        return self.discord_real_name
+        return self.discord_name
 
     def __repr__(self):
-        return (
-            f"DiscordMember(id={self.id}, discord_real_name={self.discord_real_name})"
-        )
+        return f"DiscordMember(id={self.id}, discord_id={self.discord_id}, discord_name={self.discord_name})"
 
 
 class RiotAccount(BaseSQLModel, table=True):
@@ -75,8 +74,11 @@ def unit():
     try:
         yield session
         session.commit()
+    except BotException as e:
+        session.rollback()
+        raise e
     except Exception as e:
         session.rollback()
-        raise DatabaseException(f"Rolling back, cause : {str(e)}") from e
+        raise ValueError(f"Rolling back, cause : {str(e)}") from e
     finally:
         session.close()
