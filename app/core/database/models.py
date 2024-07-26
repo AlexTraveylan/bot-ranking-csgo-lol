@@ -73,21 +73,21 @@ class RiotScore(BaseSQLModel, table=True):
         return not self.__eq__(other)
 
     def __lt__(self, other: Self) -> bool:
-        return (
-            TIER_ORDER[self.tier] < TIER_ORDER[other.tier]
-            or RANK_ORDER[self.rank] < RANK_ORDER[other.rank]
-            or self.leaguePoints < other.leaguePoints
-        )
+        if TIER_ORDER[self.tier] != TIER_ORDER[other.tier]:
+            return TIER_ORDER[self.tier] < TIER_ORDER[other.tier]
+        if RANK_ORDER[self.rank] != RANK_ORDER[other.rank]:
+            return RANK_ORDER[self.rank] < RANK_ORDER[other.rank]
+        return self.leaguePoints < other.leaguePoints
 
     def __le__(self, other: Self) -> bool:
         return self.__lt__(other) or self.__eq__(other)
 
     def __gt__(self, other: Self) -> bool:
-        return (
-            TIER_ORDER[self.tier] > TIER_ORDER[other.tier]
-            or RANK_ORDER[self.rank] > RANK_ORDER[other.rank]
-            or self.leaguePoints > other.leaguePoints
-        )
+        if TIER_ORDER[self.tier] != TIER_ORDER[other.tier]:
+            return TIER_ORDER[self.tier] > TIER_ORDER[other.tier]
+        if RANK_ORDER[self.rank] != RANK_ORDER[other.rank]:
+            return RANK_ORDER[self.rank] > RANK_ORDER[other.rank]
+        return self.leaguePoints > other.leaguePoints
 
     def __ge__(self, other: Self) -> bool:
         return not self.__lt__(other)

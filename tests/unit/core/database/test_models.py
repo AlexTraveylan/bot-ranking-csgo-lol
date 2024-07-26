@@ -76,3 +76,32 @@ def test_riot_score_sorted_with_multiple_scores(default_kwargs):
     scores.sort()
 
     assert scores == [second_score, third_score, first_score]
+
+
+def test_riot_score_sorted_ranking_in_real_situation(default_kwargs):
+    bronze_1_59_LP = RiotScore(
+        tier="BRONZE", rank="I", leaguePoints=59, **default_kwargs
+    )
+
+    iron_III_17_LP = RiotScore(
+        tier="IRON", rank="III", leaguePoints=17, **default_kwargs
+    )
+
+    silver_II_7_LP = RiotScore(
+        tier="SILVER", rank="II", leaguePoints=7, **default_kwargs
+    )
+
+    silver_IV_91_LP = RiotScore(
+        tier="SILVER", rank="IV", leaguePoints=91, **default_kwargs
+    )
+
+    scores = [bronze_1_59_LP, iron_III_17_LP, silver_II_7_LP, silver_IV_91_LP]
+    sorted_score = []
+
+    for index, score in enumerate(sorted(scores, reverse=True)):
+        sorted_score.append((index + 1, score))
+
+    assert sorted_score[0] == (1, silver_II_7_LP)
+    assert sorted_score[1] == (2, silver_IV_91_LP)
+    assert sorted_score[2] == (3, bronze_1_59_LP)
+    assert sorted_score[3] == (4, iron_III_17_LP)

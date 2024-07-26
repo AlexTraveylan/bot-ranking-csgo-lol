@@ -57,7 +57,7 @@ TIER_ORDER = {
 
 type Rank = Literal["I", "II", "III", "IV", "V"]
 
-RANK_ORDER = {"I": 4, "II": 3, "III": 2, "IV": 1, "V": 0}
+RANK_ORDER = {"I": 3, "II": 2, "III": 1, "IV": 0}
 
 
 class LeagueOutputItem(BaseModel):
