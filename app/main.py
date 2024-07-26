@@ -189,28 +189,28 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
             )
 
             if module.is_member_exist == "create":
-                message = f"Le membre {member} a été créé avec succès"
+                message = f"Le compte Riot LoL de {member} a été créé avec succès"
             else:
-                message = f"Le membre {member} existait déjà"
+                message = f"Le membre {member} a bien ajouté son smurf"
 
             embed = Embed(
-                title="Membre ajouté avec succès",
+                title="Compte Riot LoL ajouté",
                 description=message,
                 color=BrandColors.GREEN,
             )
             embed.add_field(
-                name="Compte riot (League of Legends) ajouté avec succès",
+                name="Compte Riot LoL:",
                 value=f"{riot_account}",
                 inline=False,
             )
             embed.add_field(
-                name="Score actuel",
+                name="Rank actuel",
                 value=f"{riot_score}",
                 inline=False,
             )
 
             await ctx.send(
-                f"Le nom du compte (League of legend): {riot_account}, a bien été ajouté ",
+                f"Le compte Riot LoL: {riot_account} a bien été ajouté",
                 ephemeral=True,
             )
             return await channel.send(embeds=embed)
