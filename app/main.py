@@ -185,6 +185,7 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
         with unit() as session:
             module = AfterLolForm(
                 summoner_name=summoner_name,
+                tagline=tagline,
                 discord_author_id=str(ctx.author_id),
                 discord_author_name=ctx.author.display_name,
                 session=session,
