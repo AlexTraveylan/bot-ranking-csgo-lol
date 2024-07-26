@@ -160,7 +160,7 @@ async def get_lol_modal(ctx: SlashContext):
 
     my_modal = Modal(
         ShortText(label="Nom d'invocateur", custom_id="summoner_name"),
-        ShortText(label="Tagline", custom_id="tagline", value="euw"),
+        ShortText(label="Après le #", custom_id="tagline", value="euw"),
         title="League of Legends",
         custom_id="lol_modal",
     )
