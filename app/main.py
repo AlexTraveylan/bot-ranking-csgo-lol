@@ -218,11 +218,14 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
                 value=f"{riot_score}",
                 inline=False,
             )
+            try:
+                await ctx.send(
+                    f"Le compte Riot LoL: {riot_account} a bien été ajouté",
+                    ephemeral=True,
+                )
+            except Exception:
+                pass
 
-            await ctx.send(
-                f"Le compte Riot LoL: {riot_account} a bien été ajouté",
-                ephemeral=True,
-            )
             return await channel.send(embeds=embed)
 
     except BotException as e:
@@ -239,7 +242,6 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
                 description="Une erreur inattendue est survenue",
                 color=BrandColors.RED,
             )
-            print(str(e))
             return await channel.send(embeds=embed)
         else:
             await channel.send(e.args[0])
