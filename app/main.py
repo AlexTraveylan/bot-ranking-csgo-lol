@@ -23,7 +23,7 @@ from app.adapter.exception.bot_exception import (
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
-from app.core.database.models import DiscordMember, unit
+from app.core.database.models import DiscordMember, RiotAccount, unit
 
 bot = Client(intents=Intents.ALL)
 
@@ -35,7 +35,7 @@ async def on_ready():
     begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=5, minute=0))
+@Task.create(TimeTrigger(hour=19, minute=0))
 async def begin_day():
     channel = bot.get_channel(1264655923071291414)
 
@@ -58,8 +58,10 @@ async def begin_day():
                 sorted(new_scores.items(), key=lambda x: x[1], reverse=True)
             ):
                 last_score = last_scores[account_id]
+                account = session.get_one(RiotAccount, score.riot_account_id)
+                member = session.get_one(DiscordMember, account.discord_member_id)
                 embed.add_field(
-                    name=f"#{index + 1} {riot_accounts[account_id]}",
+                    name=f"#{index + 1} {member.discord_name}: {riot_accounts[account_id]}",
                     value=f"{score} (+{score.wins - last_score.wins} wins) (+{score.losses - last_score.losses} losses)",
                     inline=False,
                 )
@@ -168,7 +170,7 @@ async def get_lol_modal(ctx: SlashContext):
 @modal_callback("lol_modal")
 async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
     """Function to handle the model league of legends form"""
-    channel = bot.get_channel(842769999638429707)
+    channel = bot.get_channel(1265030202711347322)
 
     try:
         with unit() as session:
