@@ -235,10 +235,11 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
     except Exception as e:
         if PRODUCTION:
             embed = Embed(
-                title="Erreur",
+                title="Erreur Inconnue",
                 description="Une erreur inattendue est survenue",
                 color=BrandColors.RED,
             )
+            print(str(e))
             return await channel.send(embeds=embed)
         else:
             await channel.send(e.args[0])
