@@ -209,6 +209,10 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
                 inline=False,
             )
 
+            await ctx.send(
+                f"Le nom du compte (League of legend): {riot_account}, a bien été ajouté ",
+                ephemeral=True,
+            )
             return await channel.send(embeds=embed)
 
     except BotException as e:
