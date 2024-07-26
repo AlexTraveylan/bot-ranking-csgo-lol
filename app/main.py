@@ -109,7 +109,7 @@ async def see_riot_accounts(ctx: SlashContext):
                 member = session.get_one(DiscordMember, account.discord_member_id)
                 embed.add_field(
                     name=f"{account}",
-                    value=f"Ajouté par {member.discord_name} ({member.discord_id})",
+                    value=f"Ajouté par {member.discord_name}",
                     inline=False,
                 )
 
