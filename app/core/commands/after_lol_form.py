@@ -25,18 +25,20 @@ class AfterLolForm:
     def __init__(
         self,
         summoner_name: str,
+        tagline: str,
         discord_author_id: str,
         discord_author_name: str,
         session: Session,
     ) -> None:
         self.summoner_name = summoner_name
+        self.tagline = tagline
         self.discord_author_id = discord_author_id
         self.discord_author_name = discord_author_name
         self.session = session
         self.is_member_exist: Literal["get", "create"]
 
     def __repr__(self) -> str:
-        return f"AfterLolForm(summoner_name={self.summoner_name}, discord_author_id={self.discord_author_id}, discord_author_name={self.discord_author_name}, is_member_exist={self.is_member_exist})"
+        return f"AfterLolForm(summoner_name={self.summoner_name}, tagline={self.tagline}, discord_author_id={self.discord_author_id}, discord_author_name={self.discord_author_name}, is_member_exist={self.is_member_exist})"
 
     def get_or_create_discord_member(self) -> DiscordMember:
         is_member_exist, member = DiscordMemberService.get_or_create(
@@ -63,7 +65,9 @@ class AfterLolForm:
         return None
 
     def create_riot_account(self, member: DiscordMember) -> RiotAccount:
-        riot_input = RiotAccountInput(game_name=self.summoner_name)
+        riot_input = RiotAccountInput(
+            game_name=self.summoner_name, tag_line=self.tagline
+        )
 
         try:
             lol_account_info = get_account_informations(riot_input)

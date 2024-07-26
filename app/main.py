@@ -160,6 +160,7 @@ async def get_lol_modal(ctx: SlashContext):
 
     my_modal = Modal(
         ShortText(label="Nom d'invocateur", custom_id="summoner_name"),
+        ShortText(label="Tagline", custom_id="tagline", required=False, default="euw"),
         title="League of Legends",
         custom_id="lol_modal",
     )
@@ -168,9 +169,17 @@ async def get_lol_modal(ctx: SlashContext):
 
 
 @modal_callback("lol_modal")
-async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str):
+async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: str):
     """Function to handle the model league of legends form"""
     channel = bot.get_channel(1265030202711347322)
+
+    # Clean the summoner name
+    summoner_name = summoner_name.strip()
+    if "#" in summoner_name:
+        summoner_name = summoner_name.split("#")[0]
+
+    # Clean the tagline
+    tagline = tagline.strip()
 
     try:
         with unit() as session:
