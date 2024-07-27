@@ -7,7 +7,7 @@ from app.core.database.repository import IdType, Repository
 class RiotAccountService(Repository[RiotAccount]):
     def create(session: Session, item: RiotAccount) -> RiotAccount:
         session.add(item)
-        session.commit()
+        session.flush()
         session.refresh(item)
 
         return item

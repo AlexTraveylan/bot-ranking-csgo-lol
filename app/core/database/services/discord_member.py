@@ -8,7 +8,7 @@ from app.core.database.repository import IdType, Repository
 class DiscordMemberService(Repository[DiscordMember]):
     def create(session: Session, item: DiscordMember) -> DiscordMember:
         session.add(item)
-        session.commit()
+        session.flush()
         session.refresh(item)
 
         return item

@@ -7,7 +7,7 @@ from app.core.database.repository import IdType, Repository
 class RiotScoreService(Repository[RiotScore]):
     def create(session: Session, item: RiotScore) -> RiotScore:
         session.add(item)
-        session.commit()
+        session.flush()
         session.refresh(item)
 
         return item
