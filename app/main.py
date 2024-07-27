@@ -35,7 +35,7 @@ async def on_ready():
     begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=19, minute=0))
+@Task.create(TimeTrigger(hour=19, minute=10))
 async def begin_day():
     channel = bot.get_channel(1264655923071291414)
 
