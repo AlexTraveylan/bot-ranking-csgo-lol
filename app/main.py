@@ -1,3 +1,5 @@
+import logging
+
 from interactions import (
     BrandColors,
     Button,
@@ -25,13 +27,14 @@ from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
 from app.core.database.models import DiscordMember, RiotAccount, unit
 
+logger = logging.getLogger(__name__)
 bot = Client(intents=Intents.ALL)
 
 
 @listen()
 async def on_ready():
-    print("Ready")
-    print(f"This bot is owned by {bot.owner}")
+    logger.info("Bot is ready")
+    logger.info(f"This bot is owned by {bot.owner}")
     begin_day.start()
 
 
@@ -74,6 +77,7 @@ async def begin_day():
             description=f"Une erreur est survenue: {e.message}",
             color=BrandColors.RED,
         )
+        logger.exception(e)
         return await channel.send(embeds=embed)
     except Exception as e:
         if PRODUCTION:
@@ -82,8 +86,10 @@ async def begin_day():
                 description="Une erreur inattendue est survenue",
                 color=BrandColors.RED,
             )
+            logger.exception(e)
             return await channel.send(embeds=embed)
         else:
+            logger.exception(e)
             await channel.send(e.args[0])
             raise e
 
@@ -121,6 +127,7 @@ async def see_riot_accounts(ctx: SlashContext):
             description=f"Une erreur est survenue: {e.message}",
             color=BrandColors.RED,
         )
+        logger.exception(e)
         return await ctx.send(embeds=embed)
     except Exception as e:
         if PRODUCTION:
@@ -129,8 +136,10 @@ async def see_riot_accounts(ctx: SlashContext):
                 description="Une erreur inattendue est survenue",
                 color=BrandColors.RED,
             )
+            logger.exception(e)
             return await ctx.send(embeds=embed)
         else:
+            logger.exception(e)
             await ctx.send(e.args[0])
             raise e
 
@@ -218,15 +227,15 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
                 value=f"{riot_score}",
                 inline=False,
             )
-            try:
-                await ctx.send(
-                    f"Le compte Riot LoL: {riot_account} a bien été ajouté",
-                    ephemeral=True,
-                )
-            except Exception:
-                pass
+        try:
+            await ctx.send(
+                f"Le compte Riot LoL: {riot_account} a bien été ajouté",
+                ephemeral=True,
+            )
+        except Exception:
+            pass
 
-            return await channel.send(embeds=embed)
+        return await channel.send(embeds=embed)
 
     except BotException as e:
         embed = Embed(
@@ -234,6 +243,7 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
             description=f"Une erreur est survenue: {e.message}",
             color=BrandColors.RED,
         )
+        logger.exception(e)
         return await channel.send(embeds=embed)
     except Exception as e:
         if PRODUCTION:
@@ -242,8 +252,10 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
                 description="Une erreur inattendue est survenue",
                 color=BrandColors.RED,
             )
+            logger.exception(e)
             return await channel.send(embeds=embed)
         else:
+            logger.exception(e)
             await channel.send(e.args[0])
             raise e
 
