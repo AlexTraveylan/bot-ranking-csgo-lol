@@ -74,7 +74,7 @@ class AfterLolForm:
             summoner_info = get_summoner_informations(lol_account_info.puuid)
         except Exception as e:
             raise RiotApiException(
-                "An error occured while fetching data from Riot API"
+                "Compte Riot LoL introuvable, veuillez vérifier les informations saisies"
             ) from e
 
         riot_account = RiotAccount(
@@ -94,7 +94,7 @@ class AfterLolForm:
             league_info = get_league_informations(summoner_id)
         except Exception as e:
             raise RiotApiException(
-                "An error occured while fetching data from Riot API"
+                "Impossible de récupérer les informations de la ligue"
             ) from e
 
         league_5x5: LeagueOutputItem = get_5x5_ranking(league_info)
