@@ -28,3 +28,18 @@ class CsStatsInfoSchema(BaseModel):
     assists: int
     headshots: int
     damage: int
+
+    def to_dict_for_db(self, player_id: str) -> dict[str, int | str]:
+        return {
+            "player_id": player_id,
+            "wins": self.wins,
+            "losses": self.losses,
+            "ties": self.ties,
+            "rank": self.rank,
+            "best_rank": self.best_rank,
+            "kills": self.kills,
+            "deaths": self.deaths,
+            "assists": self.assists,
+            "headshots": self.headshots,
+            "damage": self.damage,
+        }

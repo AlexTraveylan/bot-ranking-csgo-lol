@@ -93,6 +93,49 @@ class RiotScore(BaseSQLModel, table=True):
         return not self.__lt__(other)
 
 
+# Cs Go models
+
+
+class CsGoAccount(BaseSQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    player_id: str = Field(max_length=100, unique=True)
+    game_name: str = Field(max_length=100)
+    discord_member_id: int = Field(
+        sa_column=Column(Integer, ForeignKey("discordmember.id", ondelete="CASCADE"))
+    )
+
+    def __str__(self):
+        return self.game_name
+
+    def __repr__(self):
+        return f"CsGoAccount(player_id={self.player_id}, game_name={self.game_name}, discord_member_id={self.discord_member_id})"
+
+
+class CsGoStats(BaseSQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    player_id: str
+    wins: int
+    losses: int
+    ties: int
+    rank: int
+    best_rank: int
+    kills: int
+    deaths: int
+    assists: int
+    headshots: int
+    damage: int
+    created_at: datetime = Field(default=datetime.now)
+    csgo_account_id: int = Field(
+        sa_column=Column(Integer, ForeignKey("csgoaccount.id", ondelete="CASCADE"))
+    )
+
+    def __str__(self):
+        return f"{self.player_id} - {self.rank}"
+
+    def __repr__(self):
+        return f"CsGoStats(player_id={self.player_id}, wins={self.wins}, losses={self.losses}, ties={self.ties}, rank={self.rank}, best_rank={self.best_rank}, kills={self.kills}, deaths={self.deaths}, assists={self.assists}, headshots={self.headshots}, damage={self.damage})"
+
+
 # Create the database
 
 engine = create_engine(SUPABASE_URL)
