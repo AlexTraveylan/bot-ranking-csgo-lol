@@ -4,6 +4,7 @@ import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -21,7 +22,9 @@ def make_stats_url(player_id: str) -> str:
 
 def get_html_soup(player_id: str) -> BeautifulSoup:
     url = make_stats_url(player_id)
-    driver = webdriver.Chrome()
+    firefox_options = Options()
+    firefox_options.add_argument("--headless")
+    driver = webdriver.Firefox(options=firefox_options)
     try:
         driver.get(url)
         WebDriverWait(driver, 10).until(

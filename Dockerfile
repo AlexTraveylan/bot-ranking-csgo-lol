@@ -1,17 +1,21 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12
+# Utiliser l'image officielle Selenium avec Firefox
+FROM selenium/standalone-firefox:latest
 
-# Set the working directory in the container to /app
+# Installer Python
+RUN sudo apt-get update && sudo apt-get install -y python3 python3-pip
+
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Add the current directory contents into the container at /app
-ADD . /app
+# Copier les fichiers nécessaires
+COPY requirements.txt .
+COPY app /app/app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Installer les dépendances Python
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Make port 80 available to the world outside this container
+# Exposer le port si nécessaire
 EXPOSE 80
 
-# Run app.py when the container launches
-CMD ["python", "app/main.py"]
+# Commande pour exécuter l'application
+CMD ["python3", "app/main.py"]
