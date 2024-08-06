@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from app.core.database.models import RiotScore
+from app.core.database.riots_models import RiotScore
 
 
 @pytest.fixture

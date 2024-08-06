@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
-from app.core.database.models import RiotAccount
 from app.core.database.repository import IdType, Repository
+from app.core.database.riots_models import RiotAccount
 
 
 class RiotAccountService(Repository[RiotAccount]):
