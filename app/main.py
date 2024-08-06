@@ -22,6 +22,7 @@ from interactions import (
 from app.adapter.exception.bot_exception import (
     BotException,
 )
+from app.core.commands.after_cs_go_form import AfterCsGoForm
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
@@ -145,22 +146,32 @@ async def see_riot_accounts(ctx: SlashContext):
 
 
 @slash_command(
-    name="create_lol_form_button",
-    description="Create a button to ask for a League of Legends form",
+    name="create_form_buttons",
+    description="Create a button to lol and cs go form",
 )
 async def create_lol_form_button(ctx: SlashContext):
-    """Function to create the button to ask for the league of legends form"""
-
     if ctx.author_id != bot.owner:
         return await ctx.send("You are not the owner of this bot", ephemeral=True)
 
-    button = Button(
+    embed = Embed(
+        title="Création du formulaire",
+        description="Choisissez le formulaire à lancer",
+        color=BrandColors.FUCHSIA,
+    )
+
+    lol_button = Button(
         custom_id="lol_btn_form",
         style=ButtonStyle.GREEN,
         label="League of Legends",
     )
 
-    return await ctx.send("Lancer le formulaire", components=button)
+    cs_go_button = Button(
+        custom_id="cs_go_btn_form",
+        style=ButtonStyle.BLURPLE,
+        label="CS:GO",
+    )
+
+    return await ctx.send(embeds=embed, components=[lol_button, cs_go_button])
 
 
 @component_callback("lol_btn_form")
@@ -230,6 +241,89 @@ async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: st
         try:
             await ctx.send(
                 f"Le compte Riot LoL: {riot_account} a bien été ajouté",
+                ephemeral=True,
+            )
+        except Exception:
+            pass
+
+        return await channel.send(embeds=embed)
+
+    except BotException as e:
+        embed = Embed(
+            title="Erreur",
+            description=f"Une erreur est survenue: {e.message}",
+            color=BrandColors.RED,
+        )
+        logger.exception(e)
+        return await channel.send(embeds=embed)
+    except Exception as e:
+        if PRODUCTION:
+            embed = Embed(
+                title="Erreur Inconnue",
+                description="Une erreur inattendue est survenue",
+                color=BrandColors.RED,
+            )
+            logger.exception(e)
+            return await channel.send(embeds=embed)
+        else:
+            logger.exception(e)
+            await channel.send(e.args[0])
+            raise e
+
+
+@component_callback("cs_go_btn_form")
+async def get_cs_go_modal(ctx: SlashContext):
+    """Function to create the modal cs go form"""
+
+    my_modal = Modal(
+        ShortText(label="Steam ID", custom_id="steam_id"),
+        title="CS:GO",
+        custom_id="cs_go_modal",
+    )
+
+    return await ctx.send_modal(modal=my_modal)
+
+
+@modal_callback("cs_go_modal")
+async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
+    """Function to handle the model cs go form"""
+    channel = bot.get_channel(1264655139411857499)
+
+    # Clean the steam id
+    steam_id = steam_id.strip()
+
+    try:
+        with unit() as session:
+            module = AfterCsGoForm(
+                steam_id=steam_id,
+                discord_author_id=str(ctx.author_id),
+                discord_author_name=ctx.author.display_name,
+                session=session,
+            )
+
+            member = module.get_or_create_discord_member()
+            module.check_if_csgo_account_exist()
+            cs_go_account = module.create(member)
+
+            if module.is_member_exist == "create":
+                message = f"Le compte CS:GO de {member} a été créé avec succès"
+            else:
+                message = f"Le membre {member} a bien ajouté son compte CS:GO"
+
+            embed = Embed(
+                title="Compte CS:GO ajouté",
+                description=message,
+                color=BrandColors.GREEN,
+            )
+            embed.add_field(
+                name="Compte CS:GO:",
+                value=f"{cs_go_account}",
+                inline=False,
+            )
+
+        try:
+            await ctx.send(
+                f"Le compte CS:GO: {cs_go_account} a bien été ajouté",
                 ephemeral=True,
             )
         except Exception:
