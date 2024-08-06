@@ -15,7 +15,7 @@ from app.adapter.league_of_legend.api_league import (
     get_summoner_informations,
 )
 from app.adapter.league_of_legend.schema import LeagueOutputItem, RiotAccountInput
-from app.core.database.riots_models import DiscordMember, RiotAccount, RiotScore
+from app.core.database.models import DiscordMember, RiotAccount, RiotScore
 from app.core.database.services.discord_member import DiscordMemberService
 from app.core.database.services.riot_account import RiotAccountService
 from app.core.database.services.riot_score import RiotScoreService

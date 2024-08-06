@@ -7,7 +7,7 @@ from app.adapter.league_of_legend.api_league import (
     get_5x5_ranking,
     get_league_informations,
 )
-from app.core.database.riots_models import RiotAccount, RiotScore
+from app.core.database.models import RiotAccount, RiotScore
 from app.core.database.services.riot_account import RiotAccountService
 from app.core.database.services.riot_score import RiotScoreService
 

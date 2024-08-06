@@ -25,7 +25,7 @@ from app.adapter.exception.bot_exception import (
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
-from app.core.database.riots_models import DiscordMember, RiotAccount, unit
+from app.core.database.models import DiscordMember, RiotAccount, unit
 
 logger = logging.getLogger(__name__)
 bot = Client(intents=Intents.ALL)
