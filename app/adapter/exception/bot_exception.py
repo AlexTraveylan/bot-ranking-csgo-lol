@@ -42,3 +42,7 @@ class UniqueConstraintException(DatabaseException):
 
 class RiotApiException(BotException):
     pass
+
+
+class CsGoScrapingException(BotException):
+    pass

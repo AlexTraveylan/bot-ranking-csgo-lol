@@ -3,3 +3,5 @@ sqlmodel
 python-dotenv
 requests
 psycopg2
+beautifulsoup4
+selenium
