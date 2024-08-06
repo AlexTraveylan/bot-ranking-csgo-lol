@@ -1,29 +1,30 @@
-# Utiliser l'image officielle Selenium avec Firefox
-FROM selenium/standalone-firefox:latest
+# Use an official Python runtime as a parent image
+FROM python:3.12
 
-# Installer Python et venv
-USER root
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+# Install Firefox and dependencies
+RUN apt-get update && apt-get install -y \
+    firefox-esr \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-# Définir le répertoire de travail
+# Install GeckoDriver
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux64.tar.gz \
+    && tar -xvzf geckodriver-v0.32.0-linux64.tar.gz \
+    && chmod +x geckodriver \
+    && mv geckodriver /usr/local/bin/ \
+    && rm geckodriver-v0.32.0-linux64.tar.gz
+
+# Set the working directory in the container to /app
 WORKDIR /app
 
-# Copier les fichiers nécessaires
-COPY requirements.txt .
-COPY app /app/app
+# Add the current directory contents into the container at /app
+ADD . /app
 
-# Créer et activer un environnement virtuel
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Installer les dépendances Python dans l'environnement virtuel
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Changer l'utilisateur pour des raisons de sécurité
-USER seluser
-
-# Exposer le port si nécessaire
+# Make port 80 available to the world outside this container
 EXPOSE 80
 
-# Commande pour exécuter l'application
-CMD ["python3", "app/main.py"]
+# Run app.py when the container launches
+CMD ["python", "app/main.py"]
