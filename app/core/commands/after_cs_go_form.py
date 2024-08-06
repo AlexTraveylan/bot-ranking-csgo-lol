@@ -40,7 +40,7 @@ class AfterCsGoForm:
         )
 
         is_existing = any(
-            self.player_id == account.player_id for account in cs_go_accounts
+            self.player_id == account.steam_id for account in cs_go_accounts
         )
 
         if is_existing is True:
@@ -54,7 +54,7 @@ class AfterCsGoForm:
         stats = get_player_info(self.player_id)
 
         db_account = CsGoAccount(
-            player_id=self.player_id,
+            steam_id=self.player_id,
             game_name=stats.name,
             discord_member_id=member.id,
         )

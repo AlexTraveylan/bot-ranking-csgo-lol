@@ -29,9 +29,9 @@ class CsStatsInfoSchema(BaseModel):
     headshots: int
     damage: int
 
-    def to_dict_for_db(self, player_id: str) -> dict[str, int | str]:
+    def to_dict_for_db(self, steam_id: str) -> dict[str, int | str]:
         return {
-            "player_id": player_id,
+            "steam_id": steam_id,
             "wins": self.wins,
             "losses": self.losses,
             "ties": self.ties,

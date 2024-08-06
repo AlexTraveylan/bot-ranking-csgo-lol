@@ -98,7 +98,7 @@ class RiotScore(BaseSQLModel, table=True):
 
 class CsGoAccount(BaseSQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    player_id: str = Field(max_length=100, unique=True)
+    steam_id: str = Field(max_length=100, unique=True)
     game_name: str = Field(max_length=100)
     discord_member_id: int = Field(
         sa_column=Column(Integer, ForeignKey("discordmember.id", ondelete="CASCADE"))
@@ -108,12 +108,12 @@ class CsGoAccount(BaseSQLModel, table=True):
         return self.game_name
 
     def __repr__(self):
-        return f"CsGoAccount(player_id={self.player_id}, game_name={self.game_name}, discord_member_id={self.discord_member_id})"
+        return f"CsGoAccount(steam_id={self.steam_id}, game_name={self.game_name}, discord_member_id={self.discord_member_id})"
 
 
 class CsGoStats(BaseSQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    player_id: str
+    steam_id: str
     wins: int
     losses: int
     ties: int
@@ -130,10 +130,10 @@ class CsGoStats(BaseSQLModel, table=True):
     )
 
     def __str__(self):
-        return f"{self.player_id} - {self.rank}"
+        return f"{self.steam_id} - {self.rank}"
 
     def __repr__(self):
-        return f"CsGoStats(player_id={self.player_id}, wins={self.wins}, losses={self.losses}, ties={self.ties}, rank={self.rank}, best_rank={self.best_rank}, kills={self.kills}, deaths={self.deaths}, assists={self.assists}, headshots={self.headshots}, damage={self.damage})"
+        return f"CsGoStats(steam_id={self.steam_id}, wins={self.wins}, losses={self.losses}, ties={self.ties}, rank={self.rank}, best_rank={self.best_rank}, kills={self.kills}, deaths={self.deaths}, assists={self.assists}, headshots={self.headshots}, damage={self.damage})"
 
 
 # Create the database
