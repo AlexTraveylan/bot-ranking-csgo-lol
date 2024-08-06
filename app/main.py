@@ -38,7 +38,7 @@ async def on_ready():
     begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=19, minute=0))
+@Task.create(TimeTrigger(hour=17, minute=0))
 async def begin_day():
     channel = bot.get_channel(1264655923071291414)
 
@@ -96,7 +96,7 @@ async def begin_day():
 
 @slash_command(
     name="see_riot_accounts",
-    description="Affiche la liste des comptes riot enregistrés",
+    description="Affiche la liste des comptes Riot enregistrés",
 )
 async def see_riot_accounts(ctx: SlashContext):
     """Function to see the list of riot accounts"""
@@ -106,8 +106,8 @@ async def see_riot_accounts(ctx: SlashContext):
             riot_accounts = module.get_riot_accounts()
 
             embed = Embed(
-                title="Liste des comptes riot",
-                description="Voici la liste des comptes riot enregistrés",
+                title="Liste des comptes Riot",
+                description="Voici la liste des comptes Riot enregistrés",
                 color=BrandColors.BLURPLE,
             )
 
