@@ -24,9 +24,10 @@ from app.adapter.exception.bot_exception import (
 )
 from app.core.commands.after_cs_go_form import AfterCsGoForm
 from app.core.commands.after_lol_form import AfterLolForm
+from app.core.commands.cs_go_ranking import CsGoRanking
 from app.core.commands.lol_ranking import RiotRanking
 from app.core.constants import BOT_TOKEN, PRODUCTION
-from app.core.database.models import DiscordMember, RiotAccount, unit
+from app.core.database.models import DiscordMember, unit
 
 logger = logging.getLogger(__name__)
 bot = Client(intents=Intents.ALL)
@@ -36,11 +37,70 @@ bot = Client(intents=Intents.ALL)
 async def on_ready():
     logger.info("Bot is ready")
     logger.info(f"This bot is owned by {bot.owner}")
-    begin_day.start()
+    lol_begin_day.start()
+    cs_go_begin_day.start()
 
 
 @Task.create(TimeTrigger(hour=17, minute=0))
-async def begin_day():
+async def cs_go_begin_day():
+    channel = bot.get_channel(1264655139411857499)
+
+    try:
+        with unit() as session:
+            module = CsGoRanking(session=session)
+            csgo_accounts = module.get_csgo_accounts()
+            last_scores = module.get_last_cs_go_score_by_account(csgo_accounts.values())
+
+            new_scores = module.register_actual_score_for_all_accounts(
+                csgo_accounts.values()
+            )
+
+            embed = Embed(
+                title="Counter Strike ranking",
+                description="Voici le classement actuel des membres",
+                color=BrandColors.BLURPLE,
+            )
+
+            for index, (account_id, score) in enumerate(
+                sorted(new_scores.items(), key=lambda x: x[1], reverse=True)
+            ):
+                last_score = last_scores[account_id]
+                account = csgo_accounts[account_id]
+                member = session.get_one(DiscordMember, account.discord_member_id)
+                embed.add_field(
+                    name=f"#{index + 1} {member.discord_name}: {account}",
+                    value=f"Rank: {score}, (+{score.wins - last_score.wins} wins) (+{score.losses - last_score.losses} losses) (+{score.kills - last_score.kills} kills) (+{score.deaths - last_score.deaths} deaths) (+{score.assists - last_score.assists} assists)",
+                    inline=False,
+                )
+
+            return await channel.send(embeds=embed)
+
+    except BotException as e:
+        embed = Embed(
+            title="Erreur",
+            description=f"Une erreur est survenue: {e.message}",
+            color=BrandColors.RED,
+        )
+        logger.exception(e)
+        return await channel.send(embeds=embed)
+
+    except Exception as e:
+        if PRODUCTION:
+            embed = Embed(
+                title="Erreur",
+                description="Une erreur inattendue est survenue",
+                color=BrandColors.RED,
+            )
+            logger.exception(e)
+            return await channel.send(embeds=embed)
+        else:
+            logger.exception(e)
+            await channel.send(e.args[0])
+            raise e
+
+
+@Task.create(TimeTrigger(hour=17, minute=0))
+async def lol_begin_day():
     channel = bot.get_channel(1264655923071291414)
 
     try:
@@ -62,10 +122,10 @@ async def begin_day():
                 sorted(new_scores.items(), key=lambda x: x[1], reverse=True)
             ):
                 last_score = last_scores[account_id]
-                account = session.get_one(RiotAccount, score.riot_account_id)
+                account = riot_accounts[account_id]
                 member = session.get_one(DiscordMember, account.discord_member_id)
                 embed.add_field(
-                    name=f"#{index + 1} {member.discord_name}: {riot_accounts[account_id]}",
+                    name=f"#{index + 1} {member.discord_name}: {account}",
                     value=f"{score} (+{score.wins - last_score.wins} wins) (+{score.losses - last_score.losses} losses)",
                     inline=False,
                 )

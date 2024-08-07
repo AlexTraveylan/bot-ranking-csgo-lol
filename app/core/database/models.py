@@ -135,6 +135,24 @@ class CsGoStats(BaseSQLModel, table=True):
     def __repr__(self):
         return f"CsGoStats(steam_id={self.steam_id}, wins={self.wins}, losses={self.losses}, ties={self.ties}, rank={self.rank}, best_rank={self.best_rank}, kills={self.kills}, deaths={self.deaths}, assists={self.assists}, headshots={self.headshots}, damage={self.damage})"
 
+    def __eq__(self, other: Self) -> bool:
+        return self.rank == other.rank
+
+    def __ne__(self, other: Self) -> bool:
+        return not self.__eq__(other)
+
+    def __lt__(self, other: Self) -> bool:
+        return self.rank < other.rank
+
+    def __le__(self, other: Self) -> bool:
+        return self.rank <= other.rank
+
+    def __gt__(self, other: Self) -> bool:
+        return self.rank > other.rank
+
+    def __ge__(self, other: Self) -> bool:
+        return self.rank >= other.rank
+
 
 # Create the database
 
