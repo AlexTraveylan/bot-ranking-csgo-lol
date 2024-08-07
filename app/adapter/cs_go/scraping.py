@@ -16,12 +16,12 @@ logger = logging.getLogger(__name__)
 BASE_URL = "https://csstats.gg/player/"
 
 
-def make_stats_url(player_id: str) -> str:
-    return f"{BASE_URL}{player_id}#/"
+def make_stats_url(steam_id: str) -> str:
+    return f"{BASE_URL}{steam_id}#/"
 
 
-def get_html_soup(player_id: str) -> BeautifulSoup:
-    url = make_stats_url(player_id)
+def get_html_soup(steam_id: str) -> BeautifulSoup:
+    url = make_stats_url(steam_id)
     firefox_options = Options()
     firefox_options.add_argument("--headless")
     driver = webdriver.Firefox(options=firefox_options)
@@ -107,8 +107,8 @@ def get_player_stats(soup: BeautifulSoup) -> StatsPossibles:
         ) from e
 
 
-def get_player_info(player_id: str) -> CsStatsInfoSchema:
-    soup = get_html_soup(player_id)
+def get_player_info(steam_id: str) -> CsStatsInfoSchema:
+    soup = get_html_soup(steam_id)
     rating = get_actual_rank(soup)
     best_rating = get_best_rank(soup)
     player_name = get_player_name(soup)

@@ -155,7 +155,7 @@ async def create_lol_form_button(ctx: SlashContext):
 
     embed = Embed(
         title="Ajouter votre compte de jeu à associer à votre compte Discord",
-        #description="Choisissez le formulaire à lancer",
+        # description="Choisissez le formulaire à lancer",
         color=BrandColors.FUCHSIA,
     )
 
@@ -302,7 +302,7 @@ async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
             )
 
             member = module.get_or_create_discord_member()
-            module.check_if_csgo_account_exist()
+            module.check_if_csgo_account_exist(member)
             cs_go_account = module.create(member)
 
             if module.is_member_exist == "create":
