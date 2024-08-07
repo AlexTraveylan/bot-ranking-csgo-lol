@@ -1,10 +1,11 @@
+from datetime import datetime
 from typing import Literal, NoReturn
 
 from sqlmodel import Session
 
 from app.adapter.cs_go.scraping import get_player_info
 from app.adapter.exception.bot_exception import UniqueConstraintException
-from app.core.database.models import CsGoAccount, CsGoStats, DiscordMember
+from app.core.database.models import CsGoAccount, CsGoStats, DiscordMember, unit
 from app.core.database.services.cs_go_account import CsGoAccountService
 from app.core.database.services.discord_member import DiscordMemberService
 
@@ -34,9 +35,9 @@ class AfterCsGoForm:
 
         return member
 
-    def check_if_csgo_account_exist(self) -> NoReturn | None:
+    def check_if_csgo_account_exist(self, member: DiscordMember) -> NoReturn | None:
         cs_go_accounts: list[CsGoAccount] = CsGoAccountService.get_by_discord_member_id(
-            self.session, self.discord_author_id
+            self.session, member.id
         )
 
         is_existing = any(
@@ -62,8 +63,22 @@ class AfterCsGoForm:
         account_created = CsGoAccountService.create(self.session, db_account)
 
         stats_data = stats.to_dict_for_db(self.steam_id)
-        db_stats = CsGoStats(**stats_data, csgo_account_id=account_created.id)
+        db_stats = CsGoStats(
+            **stats_data, csgo_account_id=account_created.id, created_at=datetime.now()
+        )
 
         CsGoAccountService.create(self.session, db_stats)
 
         return account_created
+
+
+if __name__ == "__main__":
+    discord_id = "201103195877933057"
+    discord_name = "ibushigin"
+    IBUSHIN_ID = "76561198088442493"
+
+    with unit() as session:
+        form = AfterCsGoForm(IBUSHIN_ID, discord_id, discord_name, session)
+        member = form.get_or_create_discord_member()
+        form.check_if_csgo_account_exist(member)
+        form.create(member)
