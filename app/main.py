@@ -303,7 +303,7 @@ async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
 
             member = module.get_or_create_discord_member()
             module.check_if_csgo_account_exist(member)
-            cs_go_account = module.create(member)
+            cs_go_account, csgostats = module.create(member)
 
             if module.is_member_exist == "create":
                 message = f"Le compte counter Strike de {member} a été créé avec succès"
@@ -318,6 +318,11 @@ async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
             embed.add_field(
                 name="Compte Counter Strike:",
                 value=f"{cs_go_account}",
+                inline=False,
+            )
+            embed.add_field(
+                name="Rank actuel",
+                value=f"{csgostats}",
                 inline=False,
             )
 

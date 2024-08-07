@@ -51,7 +51,7 @@ class AfterCsGoForm:
 
         return None
 
-    def create(self, member: DiscordMember) -> CsGoAccount:
+    def create(self, member: DiscordMember) -> tuple[CsGoAccount, CsGoStats]:
         stats = get_player_info(self.steam_id)
 
         db_account = CsGoAccount(
@@ -67,9 +67,9 @@ class AfterCsGoForm:
             **stats_data, csgo_account_id=account_created.id, created_at=datetime.now()
         )
 
-        CsGoAccountService.create(self.session, db_stats)
+        stats_created = CsGoAccountService.create(self.session, db_stats)
 
-        return account_created
+        return account_created, stats_created
 
 
 if __name__ == "__main__":

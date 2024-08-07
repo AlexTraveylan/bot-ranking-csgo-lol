@@ -130,7 +130,7 @@ class CsGoStats(BaseSQLModel, table=True):
     )
 
     def __str__(self):
-        return f"{self.steam_id} - {self.rank}"
+        return f"Rank : {self.rank} - Best Rank : {self.best_rank} - K/D/A : {self.kills}/{self.deaths}/{self.assists}"
 
     def __repr__(self):
         return f"CsGoStats(steam_id={self.steam_id}, wins={self.wins}, losses={self.losses}, ties={self.ties}, rank={self.rank}, best_rank={self.best_rank}, kills={self.kills}, deaths={self.deaths}, assists={self.assists}, headshots={self.headshots}, damage={self.damage})"
