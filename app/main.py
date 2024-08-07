@@ -154,8 +154,8 @@ async def create_lol_form_button(ctx: SlashContext):
         return await ctx.send("You are not the owner of this bot", ephemeral=True)
 
     embed = Embed(
-        title="Création du formulaire",
-        description="Choisissez le formulaire à lancer",
+        title="Ajouter votre compte de jeu à associer à votre compte Discord",
+        #description="Choisissez le formulaire à lancer",
         color=BrandColors.FUCHSIA,
     )
 
@@ -168,7 +168,7 @@ async def create_lol_form_button(ctx: SlashContext):
     cs_go_button = Button(
         custom_id="cs_go_btn_form",
         style=ButtonStyle.BLURPLE,
-        label="CS:GO",
+        label="Counter Strike",
     )
 
     return await ctx.send(embeds=embed, components=[lol_button, cs_go_button])
@@ -306,24 +306,24 @@ async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
             cs_go_account = module.create(member)
 
             if module.is_member_exist == "create":
-                message = f"Le compte CS:GO de {member} a été créé avec succès"
+                message = f"Le compte counter Strike de {member} a été créé avec succès"
             else:
-                message = f"Le membre {member} a bien ajouté son compte CS:GO"
+                message = f"Le membre {member} a bien ajouté son compte Counter Strike"
 
             embed = Embed(
-                title="Compte CS:GO ajouté",
+                title="Compte Counter Strike ajouté",
                 description=message,
                 color=BrandColors.GREEN,
             )
             embed.add_field(
-                name="Compte CS:GO:",
+                name="Compte Counter Strike:",
                 value=f"{cs_go_account}",
                 inline=False,
             )
 
         try:
             await ctx.send(
-                f"Le compte CS:GO: {cs_go_account} a bien été ajouté",
+                f"Le compte Counter Strike: {cs_go_account} a bien été ajouté",
                 ephemeral=True,
             )
         except Exception:
