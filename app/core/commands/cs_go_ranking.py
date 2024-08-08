@@ -5,6 +5,7 @@ from sqlmodel import Session
 from app.adapter.cs_go.scraping import get_player_info
 from app.adapter.exception.bot_exception import DatabaseException
 from app.core.database.models import CsGoAccount, CsGoStats
+from app.core.database.services.cs_go_account import CsGoAccountService
 from app.core.database.services.cs_go_stats import CsGoStatsService
 
 
@@ -17,7 +18,7 @@ class CsGoRanking:
 
     def get_csgo_accounts(self) -> dict[int, CsGoAccount]:
         try:
-            csgo_accounts = CsGoAccount.get_all(self.session)
+            csgo_accounts = CsGoAccountService.get_all(self.session)
             return {account.id: account for account in csgo_accounts}
         except Exception as e:
             raise DatabaseException(
