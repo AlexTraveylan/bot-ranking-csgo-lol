@@ -1,4 +1,5 @@
 import logging
+import re
 
 from interactions import (
     BrandColors,
@@ -336,8 +337,8 @@ async def get_cs_go_modal(ctx: SlashContext):
     """Function to create the modal cs go form"""
 
     my_modal = Modal(
-        ShortText(label="Steam ID", custom_id="steam_id"),
-        title="CS:GO",
+        ShortText(label="Steam URL ou Steam ID", custom_id="steam_id"),
+        title="Counter Strike",
         custom_id="cs_go_modal",
     )
 
@@ -350,7 +351,17 @@ async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
     channel = bot.get_channel(1264655139411857499)
 
     # Clean the steam id
-    steam_id = steam_id.strip()
+    def extract_steam_id(input_str):
+        url_pattern = re.compile(r'https://steamcommunity\.com/profiles/(\d+)/?')
+        match = url_pattern.match(input_str)
+        if match:
+            return match.group(1)
+        elif input_str.isdigit():
+            return input_str
+        else:
+            return None
+    steam_id = extract_steam_id(steam_id).strip()
+    #steam_id = steam_id.strip()
 
     try:
         with unit() as session:
