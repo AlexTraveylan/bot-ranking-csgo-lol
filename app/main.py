@@ -1,5 +1,4 @@
 import logging
-import re
 
 from interactions import (
     BrandColors,
@@ -23,7 +22,7 @@ from interactions import (
 from app.adapter.exception.bot_exception import (
     BotException,
 )
-from app.core.commands.after_cs_go_form import AfterCsGoForm
+from app.core.commands.after_cs_go_form import AfterCsGoForm, extract_steam_id
 from app.core.commands.after_lol_form import AfterLolForm
 from app.core.commands.cs_go_ranking import CsGoRanking
 from app.core.commands.lol_ranking import RiotRanking
@@ -337,7 +336,7 @@ async def get_cs_go_modal(ctx: SlashContext):
     """Function to create the modal cs go form"""
 
     my_modal = Modal(
-        ShortText(label="Steam URL ou Steam ID", custom_id="steam_id"),
+        ShortText(label="Steam URL ou Steam ID", custom_id="steam_id_or_url"),
         title="Counter Strike",
         custom_id="cs_go_modal",
     )
@@ -346,24 +345,14 @@ async def get_cs_go_modal(ctx: SlashContext):
 
 
 @modal_callback("cs_go_modal")
-async def on_cs_go_modal_answer(ctx: ModalContext, steam_id: str):
+async def on_cs_go_modal_answer(ctx: ModalContext, steam_id_or_url: str):
     """Function to handle the model cs go form"""
+
     channel = bot.get_channel(1264655139411857499)
 
-    # Clean the steam id
-    def extract_steam_id(input_str):
-        url_pattern = re.compile(r'https://steamcommunity\.com/profiles/(\d+)/?')
-        match = url_pattern.match(input_str)
-        if match:
-            return match.group(1)
-        elif input_str.isdigit():
-            return input_str
-        else:
-            return None
-    steam_id = extract_steam_id(steam_id).strip()
-    #steam_id = steam_id.strip()
-
     try:
+        steam_id = extract_steam_id(steam_id_or_url)
+
         with unit() as session:
             module = AfterCsGoForm(
                 steam_id=steam_id,

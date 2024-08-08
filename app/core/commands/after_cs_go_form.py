@@ -1,13 +1,28 @@
+import re
 from datetime import datetime
 from typing import Literal, NoReturn
 
 from sqlmodel import Session
 
 from app.adapter.cs_go.scraping import get_player_info
-from app.adapter.exception.bot_exception import UniqueConstraintException
+from app.adapter.exception.bot_exception import BotException, UniqueConstraintException
 from app.core.database.models import CsGoAccount, CsGoStats, DiscordMember, unit
 from app.core.database.services.cs_go_account import CsGoAccountService
 from app.core.database.services.discord_member import DiscordMemberService
+
+
+def extract_steam_id(input_str: str) -> str:
+    input_str = input_str.strip()
+
+    if input_str.isdigit():
+        return input_str
+
+    url_pattern = re.compile(r"https://steamcommunity\.com/profiles/(\d+)/?")
+    match = url_pattern.match(input_str)
+    if match:
+        return match.group(1)
+
+    raise BotException("Invalid steam id")
 
 
 class AfterCsGoForm:
