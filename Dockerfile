@@ -7,12 +7,12 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GeckoDriver
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux64.tar.gz \
-    && tar -xvzf geckodriver-v0.32.0-linux64.tar.gz \
+# Install GeckoDriver version 0.35.0
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.35.0/geckodriver-v0.35.0-linux64.tar.gz \
+    && tar -xvzf geckodriver-v0.35.0-linux64.tar.gz \
     && chmod +x geckodriver \
     && mv geckodriver /usr/local/bin/ \
-    && rm geckodriver-v0.32.0-linux64.tar.gz
+    && rm geckodriver-v0.35.0-linux64.tar.gz
 
 # Set the working directory in the container to /app
 WORKDIR /app
