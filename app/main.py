@@ -251,7 +251,7 @@ async def get_lol_modal(ctx: SlashContext):
 @modal_callback("lol_modal")
 async def on_lol_modal_answer(ctx: ModalContext, summoner_name: str, tagline: str):
     """Function to handle the model league of legends form"""
-    channel = bot.get_channel(1265030202711347322)
+    channel = bot.get_channel(1264655923071291414)
 
     # Clean the summoner name
     summoner_name = summoner_name.strip()
