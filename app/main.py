@@ -41,7 +41,7 @@ async def on_ready():
     cs_go_begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=17, minute=0))
+@Task.create(TimeTrigger(hour=19, minute=15))
 async def cs_go_begin_day():
     channel = bot.get_channel(1264655139411857499)
 
@@ -99,7 +99,7 @@ async def cs_go_begin_day():
             raise e
 
 
-@Task.create(TimeTrigger(hour=17, minute=0))
+@Task.create(TimeTrigger(hour=19, minute=15))
 async def lol_begin_day():
     channel = bot.get_channel(1264655923071291414)
 
