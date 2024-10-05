@@ -49,7 +49,7 @@ def get_5x5_ranking(league_info: LeagueOutput) -> LeagueOutputItem:
     ]
 
     if league == []:
-        raise RiotApiException("Tu n'es pas classé en SoloQ, faut s'y mettre")
+        return LeagueOutputItem.from_no_data()
 
     league_5x5: LeagueOutputItem = [
         item for item in league_info.league if item.queueType == "RANKED_SOLO_5x5"

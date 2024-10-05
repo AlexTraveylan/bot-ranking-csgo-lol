@@ -31,6 +31,7 @@ class SummonerOutput(BaseModel):
 # League route schemas
 
 type Tier = Literal[
+    "UNRANKED",
     "IRON",
     "BRONZE",
     "SILVER",
@@ -44,22 +45,23 @@ type Tier = Literal[
 ]
 
 TIER_ORDER = {
-    "IRON": 0,
-    "BRONZE": 1,
-    "SILVER": 2,
-    "GOLD": 3,
-    "PLATINUM": 4,
-    "EMERALD": 5,
-    "DIAMOND": 6,
-    "MASTER": 7,
-    "GRANDMASTER": 8,
-    "CHALLENGER": 9,
+    "UNRANKED": 0,
+    "IRON": 1,
+    "BRONZE": 2,
+    "SILVER":  3,
+    "GOLD": 4,
+    "PLATINUM": 5,
+    "EMERALD": 6,
+    "DIAMOND": 7,
+    "MASTER": 8,
+    "GRANDMASTER": 9, 
+    "CHALLENGER": 10
 }
 
 
-type Rank = Literal["I", "II", "III", "IV", "V"]
+type Rank = Literal["I", "II", "III", "IV", "UNRANKED"]
 
-RANK_ORDER = {"I": 3, "II": 2, "III": 1, "IV": 0}
+RANK_ORDER = {"I": 3, "II": 2, "III": 1, "IV": 0, "UNRANKED": -1}
 
 
 class LeagueOutputItem(BaseModel):
@@ -75,6 +77,23 @@ class LeagueOutputItem(BaseModel):
     inactive: bool
     freshBlood: bool
     hotStreak: bool
+
+    @classmethod
+    def from_no_data(cls):
+        return cls(
+            leagueId="",
+            queueType="",
+            tier="UNRANKED",
+            rank="UNRANKED",
+            summonerId="",
+            leaguePoints=0,
+            wins=0,
+            losses=0,
+            veteran=False,
+            inactive=False,
+            freshBlood=False,
+            hotStreak=False,
+        )
 
 
 class LeagueOutput(BaseModel):
