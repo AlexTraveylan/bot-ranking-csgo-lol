@@ -41,7 +41,7 @@ async def on_ready():
     cs_go_begin_day.start()
 
 
-@Task.create(TimeTrigger(hour=17, minute=00))
+@Task.create(TimeTrigger(hour=17, minute=30))
 async def cs_go_begin_day():
     channel = bot.get_channel(1264655139411857499)
 
