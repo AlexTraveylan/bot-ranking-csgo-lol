@@ -38,7 +38,7 @@ async def on_ready():
     logger.info("Bot is ready")
     logger.info(f"This bot is owned by {bot.owner}")
     lol_begin_day.start()
-    # cs_go_begin_day.start()
+    cs_go_begin_day.start()
 
 
 @Task.create(TimeTrigger(hour=17, minute=00))

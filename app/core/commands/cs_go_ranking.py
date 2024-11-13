@@ -1,12 +1,16 @@
+import logging
 from datetime import datetime
 
 from sqlmodel import Session
 
+from app.adapter.cs_go.schemas import CsStatsInfoSchema
 from app.adapter.cs_go.scraping import get_player_info
 from app.adapter.exception.bot_exception import DatabaseException
 from app.core.database.models import CsGoAccount, CsGoStats
 from app.core.database.services.cs_go_account import CsGoAccountService
 from app.core.database.services.cs_go_stats import CsGoStatsService
+
+logger = logging.getLogger(__name__)
 
 
 class CsGoRanking:
@@ -48,7 +52,11 @@ class CsGoRanking:
         new_scores = {}
         try:
             for account in csgo_accounts:
-                cs_stats_info = get_player_info(account.steam_id)
+                try:
+                    cs_stats_info = get_player_info(account.steam_id)
+                except Exception as e:
+                    logger.exception(e)
+                    cs_stats_info = CsStatsInfoSchema.from_no_data()
 
                 db_stats = CsGoStats(
                     **cs_stats_info.to_dict_for_db(account.steam_id),

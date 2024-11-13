@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TypedDict
 
 from pydantic import BaseModel
@@ -43,3 +45,19 @@ class CsStatsInfoSchema(BaseModel):
             "headshots": self.headshots,
             "damage": self.damage,
         }
+
+    @classmethod
+    def from_no_data(cls) -> CsStatsInfoSchema:
+        return cls(
+            name="Error",
+            wins=0,
+            losses=0,
+            ties=0,
+            rank=0,
+            best_rank=0,
+            kills=0,
+            deaths=0,
+            assists=0,
+            headshots=0,
+            damage=0,
+        )
