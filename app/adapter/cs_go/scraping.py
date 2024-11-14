@@ -27,9 +27,8 @@ def get_html_soup(steam_id: str) -> BeautifulSoup:
     firefox_options.add_argument("--headless")
     driver = webdriver.Firefox(options=firefox_options)
     try:
-        time.sleep(random.randint(2, 5))
         driver.get(url)
-        WebDriverWait(driver, 10, random.randint(2, 5)).until(
+        WebDriverWait(driver, 10, random.randint(5, 10)).until(
             EC.presence_of_element_located((By.CLASS_NAME, "rank"))
         )
         time.sleep(2)
